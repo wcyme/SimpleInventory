@@ -31,6 +31,7 @@
   },
   "defaultProject": "simple-inventory",
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "487899f4-ebe7-486a-b757-ed8d8c5c1167"
   }
 }
