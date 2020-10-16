@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.johnny.wong.inventory"
+    },
+    "jhipsterVersion": "6.10.3",
+    "applicationType": "monolith",
+    "baseName": "SimpleInventory",
+    "packageName": "com.johnny.wong.inventory",
+    "packageFolder": "com/johnny/wong/inventory",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "mssql",
+    "prodDatabaseType": "mssql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "Njk2NzM5ZDgzNjg0MWI2YmJmNWY3Y2NkNDQzY2NmOGU3NTRkNmM2NmZmMGQ3ZmY5OTYzMDRjNmZmOThkNmEyNGU4NDg3YzY2ODY2MzgyNTBlYmNlZjdmZTczYzUyZjI2ZGZmNTViN2QxZjIwYzMwMzFmZGFlNWRiOWFiODBkOWY=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1602856163681,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}
