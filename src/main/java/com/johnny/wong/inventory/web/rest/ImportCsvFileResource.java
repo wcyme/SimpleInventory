@@ -139,8 +139,10 @@ public class ImportCsvFileResource {
                     Product product = optionalProduct.get();
                     stock.setProduct(product);
                     stock.setLocation(csvRecord.get("location"));
-                    stock.setQuantity(new Long(csvRecord.get("quantity")));
-                    if (stock.getLocation().isEmpty() || stock.getQuantity() < 0){
+                    Long qty = new Long(csvRecord.get("quantity"));
+                    stock.setQuantity(qty);
+                    log.debug("****Look****:  quantity:{}", csvRecord.get("quantity"));
+                    if (stock.getLocation().isEmpty() || stock.getQuantity() == 0){
                         skipped += 1;
                         continue;
                     }
@@ -148,7 +150,7 @@ public class ImportCsvFileResource {
                     if (optionalStock.isPresent()){
                         Stock oldStock = optionalStock.get();
                         Long oldQty = oldStock.getQuantity();
-                        Long newQty  = oldQty + stock.getQuantity();
+                        Long newQty  = oldQty + qty;
                         if (newQty > 0){
                             oldStock.setQuantity(newQty);
                             this.stockRepository.save(oldStock);
