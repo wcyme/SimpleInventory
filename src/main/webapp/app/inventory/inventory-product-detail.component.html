@@ -1,0 +1,78 @@
+<div>
+    <h2 id="page-heading">
+        <span>Product Management</span>
+
+        <div class="text-right"> 
+            <button id="jh-create-entity" class="btn btn-primary jh-create-entity create-product"
+                [routerLink]="['/product/new']">
+                <fa-icon icon="dolly-flatbed"></fa-icon>
+                <span>
+                    Internal Transfer
+                </span>
+            </button>
+            <!-- <button id="jh-create-entity" class="btn btn-info jh-create-entity create-product"
+                [routerLink]="['/product/new']">
+                <fa-icon icon="exchange-alt"></fa-icon>
+                <span>
+                    Stock In/Out
+                </span>
+            </button> -->
+        </div>
+    </h2>
+
+    <div *ngIf="product" class="card-body">
+        <h5 class="card-title">Name: {{product?.name}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Product Code:{{product?.code}}</h6>
+        <p class="card-text">Weight (g): {{product?.weight}}</p>
+        <p class="card-text">Total Stock: {{product?.totalStock}}</p>
+        <!-- <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a> -->
+    </div>
+
+    <h4>Stock Details</h4>
+    <div class="table-responsive" id="stocks" *ngIf="stocks && stocks.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr>
+                    <th scope="col" ><span>ID</span></th>
+                    <th scope="col" ><span>Location</span></th>
+                    <th scope="col" ><span>Quantity</span></th>
+                    <th scope="col"><span>Total Weight(kg)</span></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let stock of stocks ;">
+                    <td><a [routerLink]="['/stock', stock.id, 'view']">{{ stock.id }}</a></td>
+                    <td>{{ stock.location }}</td>
+                    <td>{{ stock.quantity }}</td>
+                    <td>{{ stock.quantity*product?.weight/1000 }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <!-- <button type="submit"
+                                    [routerLink]="['/stock', stock.id, 'detail']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline">Manage</span>
+                            </button> -->
+
+                            <button type="submit"
+                                    [routerLink]="['/stock', stock.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="exchange-alt"></fa-icon>
+                                <span class="d-none d-md-inline">Stock In/Out</span>
+                            </button>
+
+                            <!-- <button type="submit" (click)="delete(stock)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline">Delete</span>
+                            </button> -->
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
