@@ -11,6 +11,10 @@ import { RouterModule } from '@angular/router';
         path: 'import',
         loadChildren: () => import('./import-csv-files/import-csv-files.module').then(m => m.ImportCsvFilesModule),
       },
+      {
+        path: 'inventory',
+        loadChildren: () => import('./inventory/inventory.module').then(m => m.ImportCsvFilesModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],
