@@ -2,6 +2,8 @@ package com.johnny.wong.inventory.web.rest;
 
 import com.johnny.wong.inventory.domain.Product;
 import com.johnny.wong.inventory.repository.ProductRepository;
+import com.johnny.wong.inventory.repository.StockRepository;
+import com.johnny.wong.inventory.service.dto.ProductDTO;
 import com.johnny.wong.inventory.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,9 +38,11 @@ public class ProductResource {
     private String applicationName;
 
     private final ProductRepository productRepository;
+    private final StockRepository stockRepository;
 
-    public ProductResource(ProductRepository productRepository) {
+    public ProductResource(ProductRepository productRepository, StockRepository stockRepository) {
         this.productRepository = productRepository;
+        this.stockRepository = stockRepository;
     }
 
     /**
@@ -92,6 +97,25 @@ public class ProductResource {
     }
 
     /**
+     * {@code GET  /products} : get all the products.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
+     */
+    @GetMapping("/products/stock")
+    public List<ProductDTO> getAllProductsWithStock() {
+        log.debug("REST request to get all Products");
+        List<Product> productList = this.productRepository.findAll();
+        List<ProductDTO> retList = new ArrayList<ProductDTO>();
+        for (Product product: productList){
+            ProductDTO tempProduct = new ProductDTO(product.getId(), product.getName(), product.getCode(), product.getWeight());
+            tempProduct.setTotalStock(this.stockRepository.sumOfQuantityByProductCode(product.getCode()));
+            retList.add(tempProduct);
+        }
+        return retList;
+    }
+
+
+    /**
      * {@code GET  /products/:id} : get the "id" product.
      *
      * @param id the id of the product to retrieve.
@@ -116,4 +140,5 @@ public class ProductResource {
         productRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
+
 }
