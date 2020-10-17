@@ -28,7 +28,6 @@ public class Product implements Serializable {
     private String name;
 
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9]*$")
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
