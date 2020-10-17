@@ -97,7 +97,7 @@ public class ProductResource {
     }
 
     /**
-     * {@code GET  /products} : get all the products.
+     * {@code GET  /products} : get all the productDTOs.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
@@ -127,6 +127,30 @@ public class ProductResource {
         Optional<Product> product = productRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(product);
     }
+
+    /**
+     * {@code GET  /products/:id/stock} : get the "id" productDTO.
+     *
+     * @param id the id of the product to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the product, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/products/{id}/stock")
+    public ResponseEntity<ProductDTO> getProductWithStock(@PathVariable Long id) {
+        log.debug("REST request to get Product : {}", id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        ProductDTO productDTO;
+        if (optionalProduct.isPresent()){
+            Product product = optionalProduct.get();
+            productDTO = new ProductDTO(product.getId(), product.getName(), product.getCode(), product.getWeight());
+            productDTO.setTotalStock((this.stockRepository.sumOfQuantityByProductCode(product.getCode())));
+        }
+        else{
+            productDTO = new ProductDTO();
+        }
+        return ResponseUtil.wrapOrNotFound(Optional.of(productDTO));
+    }
+
+
 
     /**
      * {@code DELETE  /products/:id} : delete the "id" product.

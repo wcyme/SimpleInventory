@@ -92,6 +92,17 @@ public class StockResource {
     }
 
     /**
+     * {@code GET  /stocks/:productCode} : get all the stocks.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of stocks in body.
+     */
+    @GetMapping("/stocks/product/{productCode}")
+    public List<Stock> getAllStocksByProductCode(@PathVariable String productCode) {
+        log.debug("REST request to get all Stocks");
+        return stockRepository.findAllByProduct_Code(productCode);
+    }
+
+    /**
      * {@code GET  /stocks/:id} : get the "id" stock.
      *
      * @param id the id of the stock to retrieve.
