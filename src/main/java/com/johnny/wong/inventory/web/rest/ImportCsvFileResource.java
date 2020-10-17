@@ -72,15 +72,18 @@ public class ImportCsvFileResource {
             CSVParser csvParser = new CSVParser(filerReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             List<Product> productList = new ArrayList<Product>();
+            Long skipped = new Long(0);
             for (CSVRecord csvRecord: csvRecords){
                 Product product = new Product();
                 product.setCode(csvRecord.get("code"));
                 if (this.productRepository.findOneByCode(product.getCode()).isPresent()){
+                    skipped += 1;
                     continue;
                 }
                 product.setName(csvRecord.get("name"));
                 product.setWeight(new BigDecimal(csvRecord.get("weight")));
                 if (product.getCode().isEmpty() || product.getName().isEmpty() || product.getWeight() == BigDecimal.ZERO){
+                    skipped += 1;
                     continue;
                 }
                 productList.add(product);
@@ -88,13 +91,14 @@ public class ImportCsvFileResource {
             }
 
             String retLength = Integer.toString(productList.size());
+            String retSkipped = Long.toString(skipped);
             if (productList.size() > 0){
                 this.productRepository.saveAll(productList);
                 return ResponseEntity.ok()
-                    .headers(HeaderUtil.createAlert(applicationName, retLength + " products are imported to server!", retLength)).build();
+                    .headers(HeaderUtil.createAlert(applicationName, retLength + " products are imported to server!<br>" + retSkipped + " rows of data are skipped", retLength)).build();
             }
             return ResponseEntity.ok()
-                .headers(HeaderUtil.createAlert(applicationName, retLength + " products are imported to server!", retLength)).build();
+                .headers(HeaderUtil.createAlert(applicationName, retLength + " products are imported to server!<br>" + retSkipped + " rows of data are skipped", retLength)).build();
 
         }
         else{
@@ -124,36 +128,58 @@ public class ImportCsvFileResource {
             }
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             List<Stock> stockList = new ArrayList<Stock>();
+            Long skipped = new Long(0);
+            Long updated = new Long(0);
             for (CSVRecord csvRecord: csvRecords){
                 Stock stock = new Stock();
 
                 String productCode = csvRecord.get("product_code");
-                Optional<Product> optionalProductProduct = this.productRepository.findOneByCode(productCode);
-                if (optionalProductProduct.isPresent()){
-                    Product product = optionalProductProduct.get();
+                Optional<Product> optionalProduct = this.productRepository.findOneByCode(productCode);
+                if (optionalProduct.isPresent()){
+                    Product product = optionalProduct.get();
                     stock.setProduct(product);
+                    stock.setLocation(csvRecord.get("location"));
+                    stock.setQuantity(new Long(csvRecord.get("quantity")));
+                    if (stock.getLocation().isEmpty() || stock.getQuantity() < 0){
+                        skipped += 1;
+                        continue;
+                    }
+                    Optional<Stock> optionalStock = this.stockRepository.findOneByLocationAndProduct_Id(stock.getLocation(), product.getId());
+                    if (optionalStock.isPresent()){
+                        Stock oldStock = optionalStock.get();
+                        Long oldQty = oldStock.getQuantity();
+                        Long newQty  = oldQty + stock.getQuantity();
+                        if (newQty > 0){
+                            oldStock.setQuantity(newQty);
+                            this.stockRepository.save(oldStock);
+                            updated += 1;
+                        }
+                        else{
+                            skipped += 1;
+                        }
+                        continue;
+                    }
+
                 }
                 else{
                     continue;
                 }
-                stock.setLocation(csvRecord.get("location"));
-                stock.setQuantity(new Long(csvRecord.get("quantity")));
-                if (stock.getLocation().isEmpty() || stock.getQuantity() < 0){
-                    continue;
-                }
+
                 stockList.add(stock);
                 log.debug("****Look****: location:{}, quantity:{}, product_code:{}", stock.getLocation(), stock.getQuantity(), stock.getProduct().getCode());
 
             }
 
             String retLength = Integer.toString(stockList.size());
+            String retSkipped = Long.toString(skipped);
+            String retUpdated = Long.toString(updated);
             if (stockList.size() > 0){
                 this.stockRepository.saveAll(stockList);
                 return ResponseEntity.ok()
-                    .headers(HeaderUtil.createAlert(applicationName, retLength + " stock data are imported to server!", retLength)).build();
+                    .headers(HeaderUtil.createAlert(applicationName, retLength + " stock data are imported to server!<br>" +retUpdated + " rows are updated!<br>" + retSkipped + " rows are skipped!", retLength)).build();
             }
             return ResponseEntity.ok()
-                .headers(HeaderUtil.createAlert(applicationName, retLength + " stock data are imported to server!", retLength)).build();
+                .headers(HeaderUtil.createAlert(applicationName, retLength + " stock data are imported to server!<br>" +retUpdated + " rows are updated!<br>" + retSkipped + " rows are skipped!", retLength)).build();
 
         }
         else{
