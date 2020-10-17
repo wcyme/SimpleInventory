@@ -1,1 +1,45 @@
-<p>import-csv-files works!</p>
+<div>
+    <h2 id="page-heading">
+        <span>Import Csv Files</span>
+
+        <div *ngIf="csvUploadForm.get(['productCsvFile'])!.value">show me!</div>
+    </h2>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <form name="csvUploadForm" role="form" novalidate (ngSubmit)="save()">
+                <div>
+                    <jhi-alert-error></jhi-alert-error>
+                    <jhi-alert></jhi-alert>
+
+                    <div class="form-group">
+                        <label class="form-control-label">Product Csv File</label>
+                        <div>
+                            <input type="file" id="file_csv" (change)="setFileData($event, 'productCsvFile')"
+                                accept=".csv" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label">Stock Csv File</label>
+                        <div>
+                            <input type="file" id="file_csv_2" (change)="setFileData($event, 'StockCsvFile')"
+                                accept=".csv" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                        <fa-icon icon="ban" [fixedWidth]="true"></fa-icon>&nbsp;<span>Cancel</span>
+                    </button>
+
+                    <button type="submit" id="save-entity" [disabled]="csvUploadForm.invalid || isSaving"
+                        class="btn btn-primary">
+                        <fa-icon icon="save" [fixedWidth]="true"></fa-icon>&nbsp;<span>Import</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

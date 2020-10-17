@@ -4,6 +4,7 @@ import { ImportCsvFilesComponent } from './import-csv-files.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Authority } from 'app/shared/constants/authority.constants';
+import { SimpleInventorySharedModule } from 'app/shared/shared.module';
 
 const importCsvFilesRoute: Routes = [
   {
@@ -19,6 +20,6 @@ const importCsvFilesRoute: Routes = [
 
 @NgModule({
   declarations: [ImportCsvFilesComponent],
-  imports: [CommonModule, RouterModule.forChild(importCsvFilesRoute)],
+  imports: [CommonModule, SimpleInventorySharedModule, RouterModule.forChild(importCsvFilesRoute)],
 })
 export class ImportCsvFilesModule {}
