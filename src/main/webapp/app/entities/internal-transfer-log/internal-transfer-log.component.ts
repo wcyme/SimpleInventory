@@ -92,7 +92,7 @@ export class InternalTransferLogComponent implements OnInit, OnDestroy {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/internal-transfer-log'], {
+      this.router.navigate(['/log', 'internal-transfer'], {
         queryParams: {
           page: this.page,
           size: this.itemsPerPage,

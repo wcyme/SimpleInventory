@@ -27,7 +27,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let internalTransferLog of internalTransferLogs ;trackBy: trackId">
-                    <td><a [routerLink]="['/internal-transfer-log', internalTransferLog.id, 'view']">{{ internalTransferLog.id }}</a></td>
+                    <td><a [routerLink]="['/log', 'internal-transfer', internalTransferLog.id, 'view']">{{ internalTransferLog.id }}</a></td>
                     <td>{{ internalTransferLog.productCode }}</td>
                     <td>{{ internalTransferLog.locationFrom }}</td>
                     <td>{{ internalTransferLog.locationTo }}</td>
@@ -39,7 +39,7 @@
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"
-                                    [routerLink]="['/internal-transfer-log', internalTransferLog.id, 'view']"
+                                    [routerLink]="['/log', 'internal-transfer', internalTransferLog.id, 'view']"
                                     class="btn btn-info btn-sm">
                                 <fa-icon icon="eye"></fa-icon>
                                 <span class="d-none d-md-inline">View</span>
