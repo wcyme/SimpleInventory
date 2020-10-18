@@ -1,7 +1,11 @@
 package com.johnny.wong.inventory.web.rest;
 
+import com.johnny.wong.inventory.domain.InternalTransferLog;
 import com.johnny.wong.inventory.domain.Stock;
+import com.johnny.wong.inventory.domain.User;
+import com.johnny.wong.inventory.repository.InternalTransferLogRepository;
 import com.johnny.wong.inventory.repository.StockRepository;
+import com.johnny.wong.inventory.service.UserService;
 import com.johnny.wong.inventory.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,9 +40,13 @@ public class StockResource {
     private String applicationName;
 
     private final StockRepository stockRepository;
+    private final InternalTransferLogRepository internalTransferLogRepository;
+    private final UserService userService;
 
-    public StockResource(StockRepository stockRepository) {
+    public StockResource(StockRepository stockRepository, InternalTransferLogRepository internalTransferLogRepository, UserService userService) {
         this.stockRepository = stockRepository;
+        this.internalTransferLogRepository = internalTransferLogRepository;
+        this.userService = userService;
     }
 
     /**
@@ -138,7 +147,6 @@ public class StockResource {
      */
     @PutMapping("/stocks/transfer/internal")
     public ResponseEntity stockInternalTransfer(@RequestParam("from") Long fromId, @RequestParam("to") Long toId, @RequestParam("quantity") Long quantity) {
-
         Optional<Stock> optionalFrom = this.stockRepository.findById(fromId);
         Optional<Stock> optionalTo = this.stockRepository.findById(toId);
 
@@ -149,10 +157,27 @@ public class StockResource {
             if (quantity > 0 && locationFrom.getQuantity() >= quantity) {
                 locationFrom.setQuantity(locationFrom.getQuantity() - quantity);
                 locationTo.setQuantity(locationTo.getQuantity() + quantity);
-                this.stockRepository.save(locationFrom);
-                this.stockRepository.save(locationTo);
-                return ResponseEntity.ok()
-                    .headers(HeaderUtil.createAlert(applicationName, "Internal Transfer Success", "")).build();
+
+                Optional<User> user = userService.getUserWithAuthorities();
+                if (user.isPresent()) {
+                    User existUser = user.get();
+                    InternalTransferLog internalTransferLog = new InternalTransferLog();
+                    internalTransferLog.setQuantity(quantity);
+                    internalTransferLog.setUser(existUser);
+                    internalTransferLog.setCreatedDate(ZonedDateTime.now());
+                    internalTransferLog.setLocationFrom(locationFrom.getLocation());
+                    internalTransferLog.setLocationTo(locationTo.getLocation());
+                    internalTransferLog.setProductCode(locationFrom.getProduct().getCode());
+                    InternalTransferLog ret = this.internalTransferLogRepository.save(internalTransferLog);
+                    this.stockRepository.save(locationFrom);
+                    this.stockRepository.save(locationTo);
+                    return ResponseEntity.ok()
+                        .headers(HeaderUtil.createAlert(applicationName, "Internal Transfer Success", "")).body(ret);
+                }
+                return ResponseEntity.badRequest()
+                    .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "Your are not identify by the system!")).build();
+
+
             }
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "stock quantity is not enough, Please refresh the page!")).build();
@@ -211,6 +236,7 @@ public class StockResource {
             if (outQuantity > 0 && outQuantity <= stock.getQuantity()) {
                 stock.setQuantity(stock.getQuantity() - outQuantity);
                 Stock retStock = this.stockRepository.save(stock);
+
                 return ResponseEntity.ok()
                     .headers(HeaderUtil.createAlert(applicationName, "Stock Out Success", "")).body(retStock);
             }

@@ -70,6 +70,10 @@ public class ImportCsvFileResource {
         if (uploadedFile.getOriginalFilename().endsWith(".csv")){
             BufferedReader filerReader = new BufferedReader(new InputStreamReader((uploadedFile.getInputStream()), "UTF-8"));
             CSVParser csvParser = new CSVParser(filerReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
+            if (!(csvParser.getHeaderNames().contains("code") && csvParser.getHeaderNames().contains("name") && csvParser.getHeaderNames().contains("weight"))){
+                return ResponseEntity.badRequest()
+                    .headers(HeaderUtil.createFailureAlert(applicationName, false,"Import Stock CSV File", "Invalid", "Invalid csv header format.")).build();
+            }
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             List<Product> productList = new ArrayList<Product>();
             Long skipped = new Long(0);
@@ -82,7 +86,7 @@ public class ImportCsvFileResource {
                 }
                 product.setName(csvRecord.get("name"));
                 product.setWeight(new BigDecimal(csvRecord.get("weight")));
-                if (product.getCode().isEmpty() || product.getName().isEmpty() || product.getWeight() == BigDecimal.ZERO){
+                if (product.getCode().isEmpty() || product.getName().isEmpty() || product.getWeight().compareTo(BigDecimal.ZERO) <= 0 ){
                     skipped += 1;
                     continue;
                 }
@@ -137,21 +141,13 @@ public class ImportCsvFileResource {
                 Optional<Product> optionalProduct = this.productRepository.findOneByCode(productCode);
                 if (optionalProduct.isPresent()){
                     Product product = optionalProduct.get();
-                    stock.setProduct(product);
-                    stock.setLocation(csvRecord.get("location"));
                     Long qty = new Long(csvRecord.get("quantity"));
-                    stock.setQuantity(qty);
-                    log.debug("****Look****:  quantity:{}", csvRecord.get("quantity"));
-                    if (stock.getLocation().isEmpty() || stock.getQuantity() == 0){
-                        skipped += 1;
-                        continue;
-                    }
-                    Optional<Stock> optionalStock = this.stockRepository.findOneByLocationAndProduct_Id(stock.getLocation(), product.getId());
+                    Optional<Stock> optionalStock = this.stockRepository.findOneByLocationAndProduct_Id(csvRecord.get("location"), product.getId());
                     if (optionalStock.isPresent()){
                         Stock oldStock = optionalStock.get();
                         Long oldQty = oldStock.getQuantity();
                         Long newQty  = oldQty + qty;
-                        if (newQty > 0){
+                        if (newQty >= 0){
                             oldStock.setQuantity(newQty);
                             this.stockRepository.save(oldStock);
                             updated += 1;
@@ -161,15 +157,22 @@ public class ImportCsvFileResource {
                         }
                         continue;
                     }
-
+                    else{
+                        stock.setProduct(product);
+                        stock.setLocation(csvRecord.get("location"));
+                        if (qty <= 0 || stock.getLocation().isEmpty()){
+                            skipped += 1;
+                            continue;
+                        }
+                        stock.setQuantity(qty);
+                    }
                 }
                 else{
+                    skipped += 1;
                     continue;
                 }
-
                 stockList.add(stock);
                 log.debug("****Look****: location:{}, quantity:{}, product_code:{}", stock.getLocation(), stock.getQuantity(), stock.getProduct().getCode());
-
             }
 
             String retLength = Integer.toString(stockList.size());
