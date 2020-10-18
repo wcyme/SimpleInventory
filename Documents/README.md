@@ -23,7 +23,7 @@ You need the following dependencies to run the application:
 
 1. Go to the directory ...yourPathToTheProject/Simple Inventory System/src/main/docker and run the following command to start the MsSQL database.
 ```
-docker-compose -f mssql.yml up -d
+docker-compose -f mssql.yml up
 ```
 
 2. Go to the directory ...yourPathToTheProject/Simple Inventory System and run the following command to install project dependencies
