@@ -38,6 +38,7 @@ import {
   faWarehouse,
   faExchangeAlt,
   faDollyFlatbed,
+  faBackward,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -80,4 +81,5 @@ export const fontAwesomeIcons = [
   faWarehouse,
   faExchangeAlt,
   faDollyFlatbed,
+  faBackward,
 ];
