@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { JhiDataUtils, JhiEventManager } from 'ng-jhipster';
 import { ImportCsvFilesService } from './import-csv-files.service';
 
@@ -38,7 +39,31 @@ export class ImportCsvFilesComponent implements OnInit {
   }
 
   save(): void {
-    if (this.myProductCsvFile) {
+    if (this.myProductCsvFile && this.myStockCsvFile) {
+      this.isSaving = true;
+      const formData = new FormData();
+      formData.append('file', this.myProductCsvFile);
+      this.importCsvService.importProducts(formData).subscribe(
+        () => {
+          this.isSaving = true;
+          const formData = new FormData();
+          formData.append('file', this.myStockCsvFile);
+          this.importCsvService.importStocks(formData).subscribe(
+            () => {
+              this.isSaving = false;
+            },
+            err => {
+              this.isSaving = false;
+              console.error(err);
+            }
+          );
+        },
+        err => {
+          this.isSaving = false;
+          console.error(err);
+        }
+      );
+    } else if (this.myProductCsvFile) {
       this.isSaving = true;
       const formData = new FormData();
       formData.append('file', this.myProductCsvFile);
@@ -51,8 +76,7 @@ export class ImportCsvFilesComponent implements OnInit {
           console.error(err);
         }
       );
-    }
-    if (this.myStockCsvFile) {
+    } else if (this.myStockCsvFile) {
       this.isSaving = true;
       const formData = new FormData();
       formData.append('file', this.myStockCsvFile);
@@ -67,4 +91,5 @@ export class ImportCsvFilesComponent implements OnInit {
       );
     }
   }
+  uploadProductData(): void {}
 }
