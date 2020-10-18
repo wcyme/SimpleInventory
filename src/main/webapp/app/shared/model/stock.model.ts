@@ -5,8 +5,15 @@ export interface IStock {
   location?: string;
   quantity?: number;
   product?: IProduct;
+  totalWeight?: number;
 }
 
 export class Stock implements IStock {
-  constructor(public id?: number, public location?: string, public quantity?: number, public product?: IProduct) {}
+  constructor(
+    public id?: number,
+    public location?: string,
+    public quantity?: number,
+    public product?: IProduct,
+    public totalWeight?: number
+  ) {}
 }
