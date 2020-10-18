@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { JhiDataUtils, JhiEventManager } from 'ng-jhipster';
 import { ImportCsvFilesService } from './import-csv-files.service';
 
@@ -46,9 +45,9 @@ export class ImportCsvFilesComponent implements OnInit {
       this.importCsvService.importProducts(formData).subscribe(
         () => {
           this.isSaving = true;
-          const formData = new FormData();
-          formData.append('file', this.myStockCsvFile);
-          this.importCsvService.importStocks(formData).subscribe(
+          const formData2 = new FormData();
+          formData2.append('file', this.myStockCsvFile);
+          this.importCsvService.importStocks(formData2).subscribe(
             () => {
               this.isSaving = false;
             },
