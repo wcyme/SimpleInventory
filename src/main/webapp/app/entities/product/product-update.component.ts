@@ -18,7 +18,7 @@ export class ProductUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     name: [],
-    code: [null, [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$')]],
+    code: [null, [Validators.required]],
     weight: [null, [Validators.required, Validators.min(0)]],
   });
 
@@ -37,6 +37,10 @@ export class ProductUpdateComponent implements OnInit {
       code: product.code,
       weight: product.weight,
     });
+
+    if (product.code) {
+      this.editForm.get(['code'])?.disable();
+    }
   }
 
   previousState(): void {

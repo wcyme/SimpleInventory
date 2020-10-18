@@ -12,12 +12,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" for="field_name">Name</label>
-                    <input type="text" class="form-control" name="name" id="field_name"
-                           formControlName="name"/>
-                </div>
-
-                <div class="form-group">
                     <label class="form-control-label" for="field_code">Code</label>
                     <input type="text" class="form-control" name="code" id="field_code"
                            formControlName="code"/>
@@ -26,12 +20,20 @@
                                *ngIf="editForm.get('code')?.errors?.required">
                         This field is required.
                         </small>
-                        <small class="form-text text-danger"
+                        <!-- <small class="form-text text-danger"
                                *ngIf="editForm.get('code')?.errors?.pattern">
                             This field should follow pattern for "Code".
-                        </small>
+                        </small> -->
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                           formControlName="name"/>
+                </div>
+
+
 
                 <div class="form-group">
                     <label class="form-control-label" for="field_weight">Weight</label>

@@ -93,7 +93,7 @@ export class InventoryExternalTransferComponent implements OnInit {
     switch (this.stockTransfer) {
       case 'Stock Out':
         myField?.clearValidators();
-        myField?.setValidators([Validators.required, Validators.max(this.stock?.quantity || 0)]);
+        myField?.setValidators([Validators.required, Validators.max(this.stock?.quantity || 0), Validators.min(0)]);
         myField?.updateValueAndValidity();
         break;
       case 'Stock In':
