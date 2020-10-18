@@ -11,7 +11,7 @@ import { ProductService } from 'app/entities/product/product.service';
 import { EMPTY, Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { flatMap } from 'rxjs/operators';
-
+import { InventoryInternalTransferComponent } from './inventory-internal-transfer.component';
 @Injectable({ providedIn: 'root' })
 export class InventoryResolve implements Resolve<IProduct> {
   constructor(private service: ProductService, private router: Router) {}
@@ -56,10 +56,22 @@ const inventroyRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
   },
+  {
+    path: ':id/internal',
+    component: InventoryInternalTransferComponent,
+    resolve: {
+      product: InventoryResolve,
+    },
+    data: {
+      authorities: [Authority.USER],
+      pageTitle: 'Stock Internal Transfer',
+    },
+    canActivate: [UserRouteAccessService],
+  },
 ];
 
 @NgModule({
-  declarations: [InventoryComponent, InventoryProductDetailComponent],
+  declarations: [InventoryComponent, InventoryProductDetailComponent, InventoryInternalTransferComponent],
   imports: [CommonModule, SimpleInventorySharedModule, RouterModule.forChild(inventroyRoute)],
 })
 export class ImportCsvFilesModule {}
