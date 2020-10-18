@@ -15,24 +15,24 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                    <th scope="col"  jhiSortBy="createdDate"><span>Created Date</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="id"><span>ID</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="productCode"><span>Product Code</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="locationFrom"><span>Location From</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="locationTo"><span>Location To</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"  jhiSortBy="quantity"><span>Quantity</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="createdDate"><span>Created Date</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="user.login"><span>User</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="user.login"><span>Operator</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let internalTransferLog of internalTransferLogs ;trackBy: trackId">
+                    <td>{{ internalTransferLog.createdDate | date:'medium' }}</td>
                     <td><a [routerLink]="['/log', 'internal-transfer', internalTransferLog.id, 'view']">{{ internalTransferLog.id }}</a></td>
                     <td>{{ internalTransferLog.productCode }}</td>
                     <td>{{ internalTransferLog.locationFrom }}</td>
                     <td>{{ internalTransferLog.locationTo }}</td>
                     <td>{{ internalTransferLog.quantity }}</td>
-                    <td>{{ internalTransferLog.createdDate | date:'medium' }}</td>
                     <td>
                         {{ internalTransferLog.user?.login }}
                     </td>

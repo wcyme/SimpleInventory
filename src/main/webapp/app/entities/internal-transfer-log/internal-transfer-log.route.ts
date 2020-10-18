@@ -39,7 +39,7 @@ export const internalTransferLogRoute: Routes = [
     component: InternalTransferLogComponent,
     data: {
       authorities: [Authority.USER],
-      defaultSort: 'id,asc',
+      defaultSort: 'createdDate,desc',
       pageTitle: 'InternalTransferLogs',
     },
     canActivate: [UserRouteAccessService],
