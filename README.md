@@ -1,237 +1,92 @@
-# SimpleInventory
+# Introduction
 
-This application was generated using JHipster 6.10.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.3](https://www.jhipster.tech/documentation-archive/v6.10.3).
+This is a Java Web Application using Spring Boot as the backend application server.
 
-## Development
+Angular 9.0 is used as the frontend development framework.
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+A Microsoft SQL server is used as the Database server.
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+The application was generated using JHipster 6.10.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.3](https://www.jhipster.tech/documentation-archive/v6.10.3).
 
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+## Dependecies and Tools
+
+You need the following dependencies to run the application:
+
+1. Java jdk 11+
+2. Node.js
+3. Maven
+4. Angular-cli
+5. Docker (Optional, You can configure the database yourself but i would recommand using docker.)
+6. Microsoft Windows 10 (Optional, You can use linux either but the code is developed under Windows Environment)
+
+## Start The Application in Develop Mode (Windows 10)
+
+1. Go to the directory ...yourPathToTheProject/Simple Inventory System/src/main/docker and run the following command to start the MsSQL database.
+
+```
+docker-compose -f mssql.yml up -d
+```
+
+2. Go to the directory ...yourPathToTheProject/Simple Inventory System and run the following command to install project dependencies
 
 ```
 npm install
 ```
 
-We use npm scripts and [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
+3. Run the following commands in two cmd prompt seperately to build and start the application
 
 ```
+mvnw
+```
 
-./mvnw
-
-
+```
 npm start
 ```
 
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
-
-The `npm run` command will list all of the scripts available to run for this project.
-
-### PWA Support
-
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
-
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
-
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function () {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
-```
-
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
-
-### Managing dependencies
-
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
+4. Access the Web Application with a internet browser, recommended to use Chrome.
 
 ```
-npm install --save --save-exact leaflet
+localhost:9000
 ```
 
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
+## Using the Web Application
+
+1. Login to the system with the following default account, shown as below:
 
 ```
-npm install --save-dev --save-exact @types/leaflet
+User
+login:    user
+password: user
 ```
 
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Edit [src/main/webapp/app/vendor.ts](src/main/webapp/app/vendor.ts) file:
+2. Click "Import CSV Data" on the navbar to import data to the database, the csv files are also provided at the same directory with this README.md file.
+
+There are some restrictions on the format of csv file, basically, your csv file must end with ".csv" and you must contain the head row with specific headers in this csv files. You can add or modify data row of the sample csv files to create your own test.
+
+3. Click "Inventory" on the navbar to view all the products and their inventory level in the system.
+
+Within this "Inventory" page, you can create a new product and edit existing product with the buttons.
+
+Press the "Manage" button to view the stock of that product at different locations.
+
+Within the "Product Management" page, you can perform operations of internal transfer, stock in, stock out. Noted that, successful internal transfer operations will automatically create a internal transfer log.
+
+4. Click "Internal Transfer Log" on the navbar to view the Internal Transfer Logs. You can sort the logs by any field in the table by clicking the header of the column.
+
+## Common Issues Q &(A)
+
+1. Firewall Blocking server port.
+
+2. Same port are using.
+
+3. Keep showing disconnected log after runing "npm start". (You need to run "mvnw" in another cmd prompt at the same time.)
+
+4. Can't receive email after registering. (You need to configure your mail server yourself, I did have one either, just use the default account to access the system!)
+
+## Remarks
+
+I have tried my best to explain the application with this README.md. If you find something missing or could not run the application, please let me know. My email is shown as below:
 
 ```
-import 'leaflet/dist/leaflet.js';
+wcy_me@hotmail.com
 ```
-
-Edit [src/main/webapp/content/scss/vendor.scss](src/main/webapp/content/scss/vendor.scss) file:
-
-```
-@import '~leaflet/dist/leaflet.css';
-```
-
-Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-### Using Angular CLI
-
-You can also use [Angular CLI][] to generate some custom client code.
-
-For example, the following command:
-
-```
-ng generate component my-component
-```
-
-will generate few files:
-
-```
-create src/main/webapp/app/my-component/my-component.component.html
-create src/main/webapp/app/my-component/my-component.component.ts
-update src/main/webapp/app/app.module.ts
-```
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the SimpleInventory application for production, run:
-
-```
-
-./mvnw -Pprod clean verify
-
-
-```
-
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
-```
-
-java -jar target/*.jar
-
-
-```
-
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-```
-
-./mvnw -Pprod,war clean verify
-
-
-```
-
-## Testing
-
-To launch your application's tests, run:
-
-```
-./mvnw verify
-```
-
-### Client tests
-
-Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
-
-```
-npm test
-```
-
-For more information, refer to the [Running tests page][].
-
-### Code quality
-
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
-
-```
-docker-compose -f src/main/docker/sonar.yml up -d
-```
-
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
-
-Then, run a Sonar analysis:
-
-```
-./mvnw -Pprod clean verify sonar:sonar
-```
-
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
-
-```
-./mvnw initialize sonar:sonar
-```
-
-For more information, refer to the [Code quality page][].
-
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a mssql database in a docker container, run:
-
-```
-docker-compose -f src/main/docker/mssql.yml up -d
-```
-
-To stop it and remove the container, run:
-
-```
-docker-compose -f src/main/docker/mssql.yml down
-```
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-```
-./mvnw -Pprod verify jib:dockerBuild
-```
-
-Then run:
-
-```
-docker-compose -f src/main/docker/app.yml up -d
-```
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.10.3 archive]: https://www.jhipster.tech/documentation-archive/v6.10.3
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.3/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.3/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.3/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.3/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.3/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.3/setting-up-ci/
-[node.js]: https://nodejs.org/
-[yarn]: https://yarnpkg.org/
-[webpack]: https://webpack.github.io/
-[angular cli]: https://cli.angular.io/
-[browsersync]: https://www.browsersync.io/
-[jest]: https://facebook.github.io/jest/
-[jasmine]: https://jasmine.github.io/2.0/introduction.html
-[protractor]: https://angular.github.io/protractor/
-[leaflet]: https://leafletjs.com/
-[definitelytyped]: https://definitelytyped.org/
