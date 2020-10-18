@@ -1,0 +1,44 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="internalTransferLog">
+            <h2><span>Internal Transfer Log</span> {{ internalTransferLog.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Product Code</span></dt>
+                <dd>
+                    <span>{{ internalTransferLog.productCode }}</span>
+                </dd>
+                <dt><span>Location From</span></dt>
+                <dd>
+                    <span>{{ internalTransferLog.locationFrom }}</span>
+                </dd>
+                <dt><span>Location To</span></dt>
+                <dd>
+                    <span>{{ internalTransferLog.locationTo }}</span>
+                </dd>
+                <dt><span>Quantity</span></dt>
+                <dd>
+                    <span>{{ internalTransferLog.quantity }}</span>
+                </dd>
+                <dt><span>Created Date</span></dt>
+                <dd>
+                    <span>{{ internalTransferLog.createdDate }}</span>
+                </dd>
+                <dt><span>User</span></dt>
+                <dd>
+                    {{ internalTransferLog.user?.login }}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+        </div>
+    </div>
+</div>
