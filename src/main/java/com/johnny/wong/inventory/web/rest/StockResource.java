@@ -127,4 +127,42 @@ public class StockResource {
         stockRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
+
+    /**
+     * {@code PUT  /stocks/transfer/internal} : Updates two existing stocks with internal transfer quantity.
+     *
+     * @param fromId,toId the stock ids used to update the stock.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the message,
+     * or with status {@code 400 (Bad Request)} if the given parameter(s) is/are not valid,
+     * or with status {@code 500 (Internal Server Error)} if the stocks couldn't be updated.
+     */
+    @PutMapping("/stocks/transfer/internal")
+    public ResponseEntity stockInternalTransfer(@RequestParam("from") Long fromId, @RequestParam("to") Long toId, @RequestParam("quantity") Long quantity) {
+
+        Optional<Stock> optionalFrom = this.stockRepository.findById(fromId);
+        Optional<Stock> optionalTo = this.stockRepository.findById(toId);
+
+        if (optionalFrom.isPresent() && optionalTo.isPresent()) {
+            Stock locationFrom = optionalFrom.get();
+            Stock locationTo = optionalTo.get();
+
+            if (quantity > 0 && locationFrom.getQuantity() >= quantity) {
+                locationFrom.setQuantity(locationFrom.getQuantity() - quantity);
+                locationTo.setQuantity(locationTo.getQuantity() + quantity);
+                this.stockRepository.save(locationFrom);
+                this.stockRepository.save(locationTo);
+                return ResponseEntity.ok()
+                    .headers(HeaderUtil.createAlert(applicationName, "Internal Transfer Success", "")).build();
+            }
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "stock quantity is not enough, Please refresh the page!")).build();
+
+
+        }
+
+        return ResponseEntity.badRequest()
+            .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid", "Stock data is not found by given parameters")).build();
+
+
+    }
 }
