@@ -44,4 +44,12 @@ export class StockService {
   stocksTransfer(formData: FormData): Observable<EntityResponseType> {
     return this.http.put(`${this.resourceUrl + '/transfer/internal'}`, formData, { observe: 'response' });
   }
+
+  stocksIn(formData: FormData): Observable<EntityResponseType> {
+    return this.http.put(`${this.resourceUrl + '/transfer/in'}`, formData, { observe: 'response' });
+  }
+
+  stocksOut(formData: FormData): Observable<EntityResponseType> {
+    return this.http.put(`${this.resourceUrl + '/transfer/out'}`, formData, { observe: 'response' });
+  }
 }

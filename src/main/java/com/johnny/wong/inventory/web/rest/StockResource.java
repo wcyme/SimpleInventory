@@ -131,7 +131,7 @@ public class StockResource {
     /**
      * {@code PUT  /stocks/transfer/internal} : Updates two existing stocks with internal transfer quantity.
      *
-     * @param fromId,toId the stock ids used to update the stock.
+     * @param fromId,toId,quantity the stock ids used to update the stock by the quantity.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the message,
      * or with status {@code 400 (Bad Request)} if the given parameter(s) is/are not valid,
      * or with status {@code 500 (Internal Server Error)} if the stocks couldn't be updated.
@@ -156,13 +156,70 @@ public class StockResource {
             }
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "stock quantity is not enough, Please refresh the page!")).build();
-
-
         }
 
         return ResponseEntity.badRequest()
             .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid", "Stock data is not found by given parameters")).build();
-
-
     }
+
+    /**
+     * {@code PUT  /stocks/transfer/in} : Updates stock with given stock in quantity.
+     *
+     * @param stockId,inQuantity the stock ids used to update the stock.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the new Stock,
+     * or with status {@code 400 (Bad Request)} if the given parameter(s) is/are not valid,
+     * or with status {@code 500 (Internal Server Error)} if the stocks couldn't be updated.
+     */
+    @PutMapping("/stocks/transfer/in")
+    public ResponseEntity stockInTransfer(@RequestParam("id") Long stockId, @RequestParam("quantity") Long inQuantity) {
+
+        Optional<Stock> optionalStock = this.stockRepository.findById(stockId);
+
+        if (optionalStock.isPresent()) {
+            Stock stock = optionalStock.get();
+
+            if (inQuantity > 0) {
+                stock.setQuantity(stock.getQuantity() + inQuantity);
+                Stock retStock = this.stockRepository.save(stock);
+                return ResponseEntity.ok()
+                    .headers(HeaderUtil.createAlert(applicationName, "Stock In Success", "")).body(retStock);
+            }
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "Increase quantity cannot be negative!")).build();
+        }
+
+        return ResponseEntity.badRequest()
+            .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid", "Stock data is not found by given parameters")).build();
+    }
+
+    /**
+     * {@code PUT  /stocks/transfer/out} : Updates stock with given stock in quantity.
+     *
+     * @param stockId,outQuantity the stock ids used to update the stock.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the new Stock,
+     * or with status {@code 400 (Bad Request)} if the given parameter(s) is/are not valid,
+     * or with status {@code 500 (Internal Server Error)} if the stocks couldn't be updated.
+     */
+    @PutMapping("/stocks/transfer/out")
+    public ResponseEntity stockOutTransfer(@RequestParam("id") Long stockId, @RequestParam("quantity") Long outQuantity) {
+
+        Optional<Stock> optionalStock = this.stockRepository.findById(stockId);
+
+        if (optionalStock.isPresent()) {
+            Stock stock = optionalStock.get();
+
+            if (outQuantity > 0 && outQuantity <= stock.getQuantity()) {
+                stock.setQuantity(stock.getQuantity() - outQuantity);
+                Stock retStock = this.stockRepository.save(stock);
+                return ResponseEntity.ok()
+                    .headers(HeaderUtil.createAlert(applicationName, "Stock Out Success", "")).body(retStock);
+            }
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid Operation", "The existing stock is not Enough!/ Decrease quantity cannot be negative!")).build();
+        }
+
+        return ResponseEntity.badRequest()
+            .headers(HeaderUtil.createFailureAlert(applicationName, false, "Internal Transfer", "Invalid", "Stock data is not found by given parameters")).build();
+    }
+
 }

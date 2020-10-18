@@ -12,6 +12,10 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { flatMap } from 'rxjs/operators';
 import { InventoryInternalTransferComponent } from './inventory-internal-transfer.component';
+import { InventoryExternalTransferComponent } from './inventory-external-transfer.component';
+import { IStock, Stock } from 'app/shared/model/stock.model';
+import { StockService } from 'app/entities/stock/stock.service';
+
 @Injectable({ providedIn: 'root' })
 export class InventoryResolve implements Resolve<IProduct> {
   constructor(private service: ProductService, private router: Router) {}
@@ -31,6 +35,28 @@ export class InventoryResolve implements Resolve<IProduct> {
       );
     }
     return of(new Product());
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class ExternalTransferResolve implements Resolve<IStock> {
+  constructor(private service: StockService, private router: Router) {}
+
+  resolve(route: ActivatedRouteSnapshot): Observable<IStock> | Observable<never> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(
+        flatMap((stock: HttpResponse<Stock>) => {
+          if (stock.body) {
+            return of(stock.body);
+          } else {
+            this.router.navigate(['404']);
+            return EMPTY;
+          }
+        })
+      );
+    }
+    return of(new Stock());
   }
 }
 
@@ -68,10 +94,27 @@ const inventroyRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
   },
+  {
+    path: 'stock/:id/external',
+    component: InventoryExternalTransferComponent,
+    resolve: {
+      stock: ExternalTransferResolve,
+    },
+    data: {
+      authorities: [Authority.USER],
+      pageTitle: 'Stock External Transfer',
+    },
+    canActivate: [UserRouteAccessService],
+  },
 ];
 
 @NgModule({
-  declarations: [InventoryComponent, InventoryProductDetailComponent, InventoryInternalTransferComponent],
+  declarations: [
+    InventoryComponent,
+    InventoryProductDetailComponent,
+    InventoryInternalTransferComponent,
+    InventoryExternalTransferComponent,
+  ],
   imports: [CommonModule, SimpleInventorySharedModule, RouterModule.forChild(inventroyRoute)],
 })
 export class ImportCsvFilesModule {}
