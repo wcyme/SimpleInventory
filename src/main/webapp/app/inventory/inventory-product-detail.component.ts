@@ -19,6 +19,10 @@ export class InventoryProductDetailComponent implements OnInit {
   ngOnInit(): void {
     this.product = new Product();
     this.product.code = '';
+    this.loadProduct();
+  }
+
+  loadProduct(): void {
     this.activatedRoute.data.subscribe(({ product }) => {
       this.product = product;
       this.loadStocks(product?.code || '');
@@ -30,11 +34,18 @@ export class InventoryProductDetailComponent implements OnInit {
       this.stockService.findByProductCode(productCode).subscribe(
         (res: HttpResponse<IStock[]>) => {
           this.stocks = res.body || [];
+          this.calculateTotalWeight();
         },
         err => {
           console.error(err);
         }
       );
     }
+  }
+
+  calculateTotalWeight(): void {
+    this.stocks!.forEach((stock: IStock) => {
+      stock.totalWeight = ((stock.quantity || 0) * (this.product?.weight || 0)) / 1000;
+    });
   }
 }
