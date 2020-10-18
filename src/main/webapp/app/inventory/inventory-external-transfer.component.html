@@ -1,0 +1,82 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="externalTransferForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="externalTransferForm">
+            <h2 id="page-heading">
+                <span>Stock In/Out of <b>{{ stock?.product?.code }}</b> at Location <b>{{ stock?.location }}</b></span>
+            </h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <jhi-alert></jhi-alert>
+                <div class="form-group" [hidden]="!externalTransferForm.get('productCode')!.value">
+                    <label for="productCode">Product Code</label>
+                    <input type="text" class="form-control" id="productCode" name="productCode"
+                        formControlName="productCode" readonly />
+                </div>
+
+                <div class="form-group" [hidden]="!externalTransferForm.get('location')!.value">
+                    <label for="location">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" formControlName="location"
+                        readonly />
+                </div>
+
+                <div class="form-group" [hidden]="!externalTransferForm.get('originQuantity')!.value">
+                    <label for="originQuantity">Stock Quantity</label>
+                    <input type="text" class="form-control" id="originQuantity" name="originQuantity" formControlName="originQuantity"
+                        readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="isOut">Stock In/Out</label>
+                    <select (change)="updateValidator()" [(ngModel)]="stockTransfer" class="form-control" id="isOut" name="isOut" formControlName="isOut">
+                        <option [value]="'Stock In'">Stock In</option>
+                        <option [value]="'Stock Out'">Stock Out</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity"
+                        formControlName="quantity" />
+                    <div
+                        *ngIf="externalTransferForm.get('quantity')!.invalid && (externalTransferForm.get('quantity')!.dirty || externalTransferForm.get('quantity')!.touched)">
+                        <small class="form-text text-danger"
+                            *ngIf="externalTransferForm.get('quantity')?.errors?.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger" *ngIf="externalTransferForm.get('quantity')?.errors?.max">
+                            This field should be at most {{ stock?.quantity }}.
+                        </small>
+                        <small class="form-text text-danger" *ngIf="externalTransferForm.get('quantity')?.errors?.min">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!externalTransferForm.get('quantity')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <ng-container *ngIf="!isSaved">
+                        <fa-icon icon="ban" [fixedWidth]="true"></fa-icon>&nbsp;<span>Cancel</span>
+                    </ng-container>
+                    <ng-container *ngIf="isSaved">
+                        <fa-icon icon="backward" [fixedWidth]="true"></fa-icon>&nbsp;<span>Back</span>
+                    </ng-container>
+                </button>
+
+                <ng-container *ngIf="!isSaved">
+                    <button type="submit" id="save-entity" [disabled]="externalTransferForm.invalid || isSaving"
+                        class="btn btn-primary">
+                        <fa-icon icon="exchange-alt" [fixedWidth]="true"></fa-icon>&nbsp;<span>Transfer</span>
+                    </button>
+                </ng-container>
+            </div>
+        </form>
+    </div>
+</div>
